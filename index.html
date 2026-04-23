@@ -4,6 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>VELOCYTE — The Typing Laboratory</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='10' fill='%230A0A0A'/><path d='M10 12 L24 38 L38 12' fill='none' stroke='%232563EB' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><line x1='18' y1='12' x2='24' y2='24' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round' opacity='0.5'/><line x1='30' y1='12' x2='24' y2='24' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round' opacity='0.5'/><circle cx='24' cy='38' r='3' fill='%23FF4A1C'/></svg>" />
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='10' fill='%230A0A0A'/><path d='M10 12 L24 38 L38 12' fill='none' stroke='%232563EB' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><circle cx='24' cy='38' r='3' fill='%23FF4A1C'/></svg>" />
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="description" content="Velocyte — a precision typing lab. Measure velocity, refine accuracy, climb the leaderboard, or enter Breach Mode." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Geist+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
@@ -5286,6 +5290,19 @@ body.zen-mode main { padding-top: 0; }
   };
   document.addEventListener('click', unlock);
   document.addEventListener('keydown', unlock);
+
+  /* ---------- FAVICON: swap based on theme ---------- */
+  function setFavicon(theme) {
+    const link = document.querySelector("link[rel='icon']");
+    if (!link) return;
+    const minimal = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='10' fill='%230A0A0A'/><path d='M10 12 L24 38 L38 12' fill='none' stroke='%232563EB' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><line x1='18' y1='12' x2='24' y2='24' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round' opacity='0.5'/><line x1='30' y1='12' x2='24' y2='24' stroke='%232563EB' stroke-width='2.5' stroke-linecap='round' opacity='0.5'/><circle cx='24' cy='38' r='3' fill='%23FF4A1C'/></svg>";
+    const breach = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='2' fill='%23050607'/><path d='M10 12 L24 38 L38 12' fill='none' stroke='%2339FF14' stroke-width='4' stroke-linecap='square' stroke-linejoin='miter'/><line x1='18' y1='12' x2='24' y2='24' stroke='%2339FF14' stroke-width='2.5' stroke-linecap='square' opacity='0.6'/><line x1='30' y1='12' x2='24' y2='24' stroke='%2339FF14' stroke-width='2.5' stroke-linecap='square' opacity='0.6'/><rect x='21' y='35' width='6' height='6' fill='%2339FF14'/></svg>";
+    link.href = theme === 'breach' ? breach : minimal;
+  }
+  setFavicon(state.theme);
+  // Re-apply favicon whenever theme changes (hook into the breach sequence)
+  new MutationObserver(() => setFavicon(document.documentElement.getAttribute('data-theme')))
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   /* ---------- INIT ---------- */
   document.documentElement.setAttribute('data-theme', state.theme);
