@@ -732,7 +732,7 @@ main { position: relative; }
    ========================================================== */
 .hero {
   min-height: auto;
-  padding: 18px 36px 32px;
+  padding: 6px 36px 14px;
   position: relative;
   max-width: 1400px;
   margin: 0 auto;
@@ -768,9 +768,9 @@ main { position: relative; }
   letter-spacing: 0.25em;
   color: var(--ink-mute);
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   font-weight: 600;
-  padding: 6px 14px 6px 10px;
+  padding: 5px 13px 5px 9px;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -798,12 +798,12 @@ main { position: relative; }
 .hero-title {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(2.2rem, 5.8vw, 4.8rem);
-  line-height: 0.92;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.6rem, 3.9vw, 3rem);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
   color: var(--ink);
   font-variation-settings: "opsz" 144, "SOFT" 20, "wght" 300;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   max-width: 13ch;
 }
 [data-theme="breach"] .hero-title {
@@ -866,31 +866,31 @@ main { position: relative; }
 [data-theme="breach"] .hero-wave span { box-shadow: 0 0 6px var(--accent); }
 
 .hero-lead {
-  max-width: 52ch;
-  font-size: 0.98rem;
-  line-height: 1.5;
+  max-width: 50ch;
+  font-size: 0.86rem;
+  line-height: 1.45;
   color: var(--ink-soft);
   font-weight: 400;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
   animation: floatIn 0.7s 0.3s backwards cubic-bezier(0.22, 1, 0.36, 1);
 }
-[data-theme="breach"] .hero-lead { font-family: var(--font-mono); font-size: 0.88rem; color: var(--ink-soft); }
+[data-theme="breach"] .hero-lead { font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-soft); }
 
 .hero-mode-bar {
   display: inline-flex;
   gap: 4px;
-  padding: 4px;
+  padding: 3px;
   background: var(--bg-2);
   border: 1px solid var(--line);
   border-radius: 999px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
   animation: floatIn 0.7s 0.4s backwards cubic-bezier(0.22, 1, 0.36, 1);
 }
 .hero-mode-bar button {
-  padding: 7px 14px;
+  padding: 6px 12px;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   letter-spacing: 0.1em;
   font-weight: 600;
   color: var(--ink-mute);
@@ -908,8 +908,273 @@ main { position: relative; }
 [data-theme="breach"] .hero-mode-bar button.active { background: var(--accent); color: var(--bg); box-shadow: var(--glow); }
 .hero-mode-bar button:hover:not(.active) { color: var(--ink); }
 
+/* Code mode pill in hero mode bar — stands out with a pulsing dot */
+.hero-mode-bar button.code-mode-pill {
+  position: relative;
+  padding-left: 22px;
+  color: var(--accent);
+}
+.hero-mode-bar button.code-mode-pill .new-dot {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: breachPulse 1.6s infinite;
+}
+.hero-mode-bar button.code-mode-pill.active { background: var(--accent); color: #fff; }
+[data-theme="breach"] .hero-mode-bar button.code-mode-pill { color: var(--accent); text-shadow: 0 0 4px currentColor; }
+[data-theme="breach"] .hero-mode-bar button.code-mode-pill.active { background: var(--accent); color: var(--bg); text-shadow: none; }
+
+/* ==========================================================
+   CODE CALLOUT — featured NEW section under hero CTAs
+   ========================================================== */
+.code-callout {
+  position: relative;
+  margin-top: 32px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--accent) 8%, var(--paper)),
+    var(--paper) 60%);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+  animation:
+    floatIn 0.8s 0.8s backwards cubic-bezier(0.22, 1, 0.36, 1),
+    calloutBreathe 4.5s ease-in-out 1.8s infinite;
+  overflow: hidden;
+}
+@keyframes calloutBreathe {
+  0%, 100% {
+    box-shadow: var(--shadow-sm), 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  }
+  50% {
+    box-shadow: var(--shadow-sm), 0 0 28px -4px color-mix(in srgb, var(--accent) 35%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  }
+}
+.code-callout::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 50%),
+    radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 50%);
+  pointer-events: none;
+  animation: calloutGlowShift 8s ease-in-out infinite;
+}
+@keyframes calloutGlowShift {
+  0%, 100% {
+    background:
+      radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 50%),
+      radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 50%);
+  }
+  50% {
+    background:
+      radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 55%),
+      radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--accent-2) 18%, transparent), transparent 55%);
+  }
+}
+/* subtle animated scanline across the callout */
+.code-callout::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 12%, transparent),
+    transparent);
+  animation: calloutShimmer 5s ease-in-out 2s infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes calloutShimmer {
+  0% { left: -100%; }
+  60%, 100% { left: 200%; }
+}
+[data-theme="breach"] .code-callout {
+  background: rgba(7,9,13,0.7);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(57,255,20,0.15), inset 0 0 30px rgba(57,255,20,0.04);
+  animation:
+    floatIn 0.8s 0.8s backwards cubic-bezier(0.22, 1, 0.36, 1),
+    calloutBreachBreathe 3.5s ease-in-out 1.8s infinite;
+}
+@keyframes calloutBreachBreathe {
+  0%, 100% { box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(57,255,20,0.15), inset 0 0 30px rgba(57,255,20,0.04); }
+  50% { box-shadow: 0 0 0 1px var(--accent), 0 0 40px rgba(57,255,20,0.35), inset 0 0 40px rgba(57,255,20,0.08); }
+}
+
+.code-callout-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #fff;
+  background: var(--accent);
+  padding: 5px 10px;
+  border-radius: 999px;
+  align-self: start;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: newBadgePulse 2.2s ease-in-out infinite;
+}
+@keyframes newBadgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+[data-theme="breach"] .code-callout-badge {
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.code-callout-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.code-callout-head { display: flex; flex-direction: column; gap: 2px; }
+.code-callout-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 40;
+  line-height: 1.1;
+}
+[data-theme="breach"] .code-callout-title {
+  font-family: "VT323", monospace;
+  font-size: 1.4rem;
+  color: var(--accent);
+  text-shadow: 0 0 6px currentColor;
+}
+.code-callout-sub {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mute);
+  letter-spacing: 0.02em;
+}
+
+.code-callout-langs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.lang-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 6px 6px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-chip:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.lang-chip.active {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+[data-theme="breach"] .lang-chip {
+  background: rgba(57,255,20,0.04);
+  border-radius: 2px;
+  color: var(--accent);
+}
+[data-theme="breach"] .lang-chip.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+.lang-logo {
+  display: inline-grid;
+  place-items: center;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #fff;
+  letter-spacing: 0;
+}
+.lang-py { background: linear-gradient(135deg, #306998, #FFD43B); }
+.lang-java { background: linear-gradient(135deg, #EA2D2E, #F89820); }
+.lang-cpp { background: linear-gradient(135deg, #00599C, #659AD2); font-size: 0.56rem; }
+[data-theme="breach"] .lang-logo {
+  border-radius: 0;
+  background: var(--accent) !important;
+  color: var(--bg);
+}
+
+.code-callout-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-left: auto;
+  white-space: nowrap;
+}
+.code-callout-cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px -4px var(--accent);
+}
+[data-theme="breach"] .code-callout-cta {
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 2px;
+  box-shadow: 0 0 12px var(--accent);
+}
+[data-theme="breach"] .code-callout-cta:hover {
+  background: var(--accent-3);
+  box-shadow: 0 0 24px var(--accent-3);
+}
+
+@media (max-width: 720px) {
+  .code-callout { grid-template-columns: 1fr; }
+  .code-callout-body { flex-direction: column; align-items: flex-start; }
+  .code-callout-cta { margin-left: 0; }
+}
+
 .hero-cta {
   display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin-top: 24px;
   animation: floatIn 0.7s 0.55s backwards cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -939,7 +1204,7 @@ main { position: relative; }
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 22px;
+  margin-top: 18px;
   animation: floatIn 0.7s 0.7s backwards cubic-bezier(0.22, 1, 0.36, 1);
 }
 .hero-stat-pill {
@@ -1425,6 +1690,18 @@ body.zen-mode main { padding-top: 0; }
   margin: 0 6px; align-self: center;
 }
 
+/* NEW dot for the Code pill in practice mode switcher */
+.pill-new-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 5px;
+  vertical-align: 1px;
+  animation: breachPulse 1.6s infinite;
+}
+[data-theme="breach"] .pill-new-dot { box-shadow: 0 0 6px var(--accent); }
+
 /* live stats row */
 .live-row {
   display: grid;
@@ -1838,6 +2115,109 @@ body.zen-mode main { padding-top: 0; }
   100% { transform: translateY(0) scale(1); }
 }
 .char.just-typed { animation: charPop 0.18s ease-out; }
+
+/* ==========================================================
+   CODE MODE — preserves whitespace, monospaced, left-aligned
+   ========================================================== */
+.stream.code-stream {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-align: left;
+  white-space: pre-wrap;
+  tab-size: 4;
+}
+.stream.code-stream .char { white-space: pre; }
+.stream.code-stream .char.nl {
+  color: var(--ink-faint);
+  opacity: 0.5;
+  font-size: 0.8em;
+  margin-left: 2px;
+}
+.stream.code-stream .char.nl.correct {
+  color: var(--accent);
+  opacity: 0.9;
+}
+.stream.code-stream .char.tb {
+  display: inline-block;
+  opacity: 0.4;
+}
+[data-theme="breach"] .stream.code-stream .char.nl { color: var(--accent); opacity: 0.4; }
+[data-theme="breach"] .stream.code-stream { font-size: 0.92rem; }
+
+/* In code mode, typer body needs left alignment + more breathing room */
+.typer:has(.code-stream) {
+  line-height: 1.55;
+  font-size: 0.95rem;
+  padding: 24px 28px 28px;
+}
+
+/* Output box shown in results after a code run */
+.code-output {
+  margin-top: 18px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+[data-theme="breach"] .code-output {
+  background: rgba(7,9,13,0.88);
+  border-color: var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px var(--accent), inset 0 0 24px rgba(57,255,20,0.06);
+}
+.code-output-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+[data-theme="breach"] .code-output-head {
+  background: rgba(7,9,13,0.95);
+  border-color: var(--accent);
+  color: var(--accent);
+  text-shadow: 0 0 4px currentColor;
+}
+.code-output-head .lang-tag {
+  padding: 3px 9px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+}
+[data-theme="breach"] .code-output-head .lang-tag {
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 2px;
+}
+.code-output-body {
+  padding: 16px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre-wrap;
+  max-height: 280px;
+  overflow-y: auto;
+}
+[data-theme="breach"] .code-output-body {
+  color: var(--accent);
+  text-shadow: 0 0 4px currentColor;
+}
+.code-output-body::before {
+  content: "▶ ";
+  color: var(--accent);
+  font-weight: 700;
+}
 
 .caret {
   position: absolute;
@@ -2812,6 +3192,23 @@ body.zen-mode main { padding-top: 0; }
   font-size: 0.68rem; letter-spacing: 0.25em;
   color: var(--ink-mute); text-transform: uppercase;
   margin-bottom: 16px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+}
+.footer-new-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  border-radius: 999px;
+  animation: newBadgePulse 2.2s ease-in-out infinite;
+}
+[data-theme="breach"] .footer-new-tag {
+  color: var(--bg);
+  border-radius: 2px;
+  box-shadow: 0 0 6px var(--accent);
 }
 .footer-col a {
   display: block;
@@ -3124,14 +3521,19 @@ body.zen-mode main { padding-top: 0; }
         </p>
 
         <!-- Quick mode selector -->
-        <div class="hero-mode-bar" id="heroModeBar" role="tablist" aria-label="Test duration">
+        <div class="hero-mode-bar" id="heroModeBar" role="tablist" aria-label="Test mode">
           <button data-mode="time" data-val="15">15s</button>
           <button data-mode="time" data-val="30" class="active">30s</button>
           <button data-mode="time" data-val="60">60s</button>
           <button data-mode="words" data-val="25">25 words</button>
           <button data-mode="quote" data-val="short">Quote</button>
+          <button data-mode="code" data-val="python" class="code-mode-pill">
+            <span class="new-dot"></span>
+            Code
+          </button>
         </div>
 
+        <!-- Code mode callout: the highlighted new feature -->
         <div class="hero-cta">
           <button class="btn btn-primary" id="ctaBegin">
             Begin Practice
@@ -3158,6 +3560,35 @@ body.zen-mode main { padding-top: 0; }
           <div class="hero-stat-pill">
             <svg class="hsp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             <strong id="heroStreak">0</strong> day streak
+          </div>
+        </div>
+
+        <!-- NEW: Code practice callout — positioned below stats so CTAs stay above the fold -->
+        <div class="code-callout" id="codeCallout">
+          <div class="code-callout-badge">NEW</div>
+          <div class="code-callout-body">
+            <div class="code-callout-head">
+              <span class="code-callout-title">Type real code.</span>
+              <span class="code-callout-sub">Practice syntax, not prose.</span>
+            </div>
+            <div class="code-callout-langs" role="tablist" aria-label="Choose language">
+              <button class="lang-chip active" data-lang="python" title="Python">
+                <span class="lang-logo lang-py">py</span>
+                <span>Python</span>
+              </button>
+              <button class="lang-chip" data-lang="java" title="Java">
+                <span class="lang-logo lang-java">J</span>
+                <span>Java</span>
+              </button>
+              <button class="lang-chip" data-lang="cpp" title="C++">
+                <span class="lang-logo lang-cpp">++</span>
+                <span>C++</span>
+              </button>
+            </div>
+            <button class="code-callout-cta" id="ctaCode">
+              Start Code Practice
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -3222,6 +3653,9 @@ body.zen-mode main { padding-top: 0; }
           <button class="pill active" data-mode="time">Time</button>
           <button class="pill" data-mode="words">Words</button>
           <button class="pill" data-mode="quote">Quote</button>
+          <button class="pill" data-mode="code">
+            <span class="pill-new-dot"></span>Code
+          </button>
         </div>
         <div class="pill-sep"></div>
         <div class="pills" id="timeGroup">
@@ -3240,6 +3674,11 @@ body.zen-mode main { padding-top: 0; }
           <button class="pill active" data-val="short">Short</button>
           <button class="pill" data-val="medium">Medium</button>
           <button class="pill" data-val="long">Long</button>
+        </div>
+        <div class="pills" id="codeGroup" style="display:none;">
+          <button class="pill active" data-val="python">Python</button>
+          <button class="pill" data-val="java">Java</button>
+          <button class="pill" data-val="cpp">C++</button>
         </div>
       </div>
 
@@ -3392,6 +3831,13 @@ body.zen-mode main { padding-top: 0; }
         <a href="#test" onclick="document.body.classList.add('zen-mode')">Enter Zen Mode 🧘</a>
       </div>
       <div class="footer-col">
+        <h4>Code Practice <span class="footer-new-tag">NEW</span></h4>
+        <a href="#test" data-code-lang="python">Python Snippets</a>
+        <a href="#test" data-code-lang="java">Java Snippets</a>
+        <a href="#test" data-code-lang="cpp">C++ Snippets</a>
+        <a href="#test" data-code-lang="python">Random Snippet →</a>
+      </div>
+      <div class="footer-col">
         <h4>Time Wasters</h4>
         <a href="https://monkeytype.com" target="_blank" rel="noopener">Our Sworn Rival →</a>
         <a href="https://play.typeracer.com" target="_blank" rel="noopener">TypeRacer (2008 called)</a>
@@ -3537,6 +3983,7 @@ body.zen-mode main { padding-top: 0; }
       perSec: [],
       errsInSec: 0,
       lastText: '',
+      currentSnippet: null,
       tabHit: false
     }
   };
@@ -3595,6 +4042,312 @@ body.zen-mode main { padding-top: 0; }
     "Simplicity is the ultimate sophistication."
   ];
   const LONG_QUOTE = PARAS.slice(0, 5).join(" ");
+
+  /* ---------- CODE SNIPPETS ---------- */
+  const CODE_SNIPPETS = {
+    java: [
+      {
+        title: "FizzBuzz",
+        code: `public class FizzBuzz {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 15; i++) {
+            if (i % 15 == 0) {
+                System.out.println("FizzBuzz");
+            } else if (i % 3 == 0) {
+                System.out.println("Fizz");
+            } else if (i % 5 == 0) {
+                System.out.println("Buzz");
+            } else {
+                System.out.println(i);
+            }
+        }
+    }
+}`,
+        output: `1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz`
+      },
+      {
+        title: "Fibonacci",
+        code: `public class Fibonacci {
+    public static void main(String[] args) {
+        int n = 10;
+        long a = 0, b = 1;
+        System.out.print("Fibonacci: ");
+        for (int i = 0; i < n; i++) {
+            System.out.print(a);
+            if (i < n - 1) System.out.print(", ");
+            long temp = a + b;
+            a = b;
+            b = temp;
+        }
+        System.out.println();
+        System.out.println("Done.");
+    }
+}`,
+        output: `Fibonacci: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34
+Done.`
+      },
+      {
+        title: "Reverse String",
+        code: `public class Reverse {
+    public static String reverse(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = s.length() - 1; i >= 0; i--) {
+            sb.append(s.charAt(i));
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        String input = "Velocyte";
+        String result = reverse(input);
+        System.out.println("Original: " + input);
+        System.out.println("Reversed: " + result);
+    }
+}`,
+        output: `Original: Velocyte
+Reversed: etycoleV`
+      },
+      {
+        title: "Prime Check",
+        code: `public class PrimeCheck {
+    static boolean isPrime(int n) {
+        if (n < 2) return false;
+        for (int i = 2; i * i <= n; i++) {
+            if (n % i == 0) return false;
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {2, 7, 15, 23, 100};
+        for (int n : nums) {
+            System.out.println(n + " prime? " + isPrime(n));
+        }
+    }
+}`,
+        output: `2 prime? true
+7 prime? true
+15 prime? false
+23 prime? true
+100 prime? false`
+      }
+    ],
+    cpp: [
+      {
+        title: "Hello World++",
+        code: `#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int main() {
+    vector<string> greetings = {"Hello", "Hola", "Bonjour"};
+    for (const auto& g : greetings) {
+        cout << g << ", world!" << endl;
+    }
+    cout << "Total: " << greetings.size() << endl;
+    return 0;
+}`,
+        output: `Hello, world!
+Hola, world!
+Bonjour, world!
+Total: 3`
+      },
+      {
+        title: "Bubble Sort",
+        code: `#include <iostream>
+using namespace std;
+
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = 7;
+    bubbleSort(arr, n);
+    cout << "Sorted: ";
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    cout << endl;
+    return 0;
+}`,
+        output: `Sorted: 11 12 22 25 34 64 90`
+      },
+      {
+        title: "Sum of Digits",
+        code: `#include <iostream>
+using namespace std;
+
+int sumOfDigits(int n) {
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+int main() {
+    int nums[] = {123, 456, 9999, 7};
+    for (int n : nums) {
+        cout << "Sum of digits of " << n
+             << " = " << sumOfDigits(n) << endl;
+    }
+    return 0;
+}`,
+        output: `Sum of digits of 123 = 6
+Sum of digits of 456 = 15
+Sum of digits of 9999 = 36
+Sum of digits of 7 = 7`
+      },
+      {
+        title: "Factorial (Recursive)",
+        code: `#include <iostream>
+using namespace std;
+
+long long factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+int main() {
+    for (int i = 1; i <= 8; i++) {
+        cout << i << "! = " << factorial(i) << endl;
+    }
+    return 0;
+}`,
+        output: `1! = 1
+2! = 2
+3! = 6
+4! = 24
+5! = 120
+6! = 720
+7! = 5040
+8! = 40320`
+      }
+    ],
+    python: [
+      {
+        title: "List Comprehension",
+        code: `# Squares of even numbers from 1 to 20
+numbers = range(1, 21)
+even_squares = [n * n for n in numbers if n % 2 == 0]
+
+print("Even squares:")
+for i, sq in enumerate(even_squares, 1):
+    print(f"  {i}: {sq}")
+
+print(f"Total: {len(even_squares)}")
+print(f"Sum: {sum(even_squares)}")`,
+        output: `Even squares:
+  1: 4
+  2: 16
+  3: 36
+  4: 64
+  5: 100
+  6: 144
+  7: 196
+  8: 256
+  9: 324
+  10: 400
+Total: 10
+Sum: 1540`
+      },
+      {
+        title: "Word Frequency",
+        code: `text = "the quick brown fox jumps over the lazy dog the fox is quick"
+
+words = text.split()
+freq = {}
+for word in words:
+    freq[word] = freq.get(word, 0) + 1
+
+sorted_freq = sorted(freq.items(), key=lambda x: -x[1])
+
+print("Word frequency:")
+for word, count in sorted_freq:
+    bar = "#" * count
+    print(f"  {word:8} | {bar} ({count})")`,
+        output: `Word frequency:
+  the      | ### (3)
+  quick    | ## (2)
+  fox      | ## (2)
+  brown    | # (1)
+  jumps    | # (1)
+  over     | # (1)
+  lazy     | # (1)
+  dog      | # (1)
+  is       | # (1)`
+      },
+      {
+        title: "Binary Search",
+        code: `def binary_search(arr, target):
+    lo, hi = 0, len(arr) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+
+nums = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+for t in [7, 12, 19, 1]:
+    idx = binary_search(nums, t)
+    print(f"Find {t}: index {idx}")`,
+        output: `Find 7: index 3
+Find 12: index -1
+Find 19: index 9
+Find 1: index 0`
+      },
+      {
+        title: "Class: Point",
+        code: `class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def distance(self, other):
+        dx = self.x - other.x
+        dy = self.y - other.y
+        return (dx * dx + dy * dy) ** 0.5
+
+    def __repr__(self):
+        return f"Point({self.x}, {self.y})"
+
+a = Point(0, 0)
+b = Point(3, 4)
+print(a)
+print(b)
+print(f"Distance: {a.distance(b)}")`,
+        output: `Point(0, 0)
+Point(3, 4)
+Distance: 5.0`
+      }
+    ]
+  };
 
   /* ---------- AUDIO ENGINE ---------- */
   const audio = {
@@ -4247,6 +5000,19 @@ body.zen-mode main { padding-top: 0; }
 
   function pickParagraph() {
     let pool, pick;
+    if (state.test.mode === 'code') {
+      const lang = state.test.modeVal || 'python';
+      const snippets = CODE_SNIPPETS[lang] || CODE_SNIPPETS.python;
+      let snippet;
+      let tries = 0;
+      do {
+        snippet = snippets[Math.floor(Math.random() * snippets.length)];
+        tries++;
+      } while (snippet.code === state.test.lastText && tries < 8 && snippets.length > 1);
+      state.test.lastText = snippet.code;
+      state.test.currentSnippet = snippet;
+      return snippet.code;
+    }
     if (state.test.mode === 'quote') {
       if (state.test.modeVal === 'short') pool = SHORT_QUOTES;
       else if (state.test.modeVal === 'long') return LONG_QUOTE;
@@ -4266,6 +5032,7 @@ body.zen-mode main { padding-top: 0; }
       tries++;
     } while (pick === state.test.lastText && tries < 8);
     state.test.lastText = pick;
+    state.test.currentSnippet = null;
     return pick;
   }
 
@@ -4274,6 +5041,31 @@ body.zen-mode main { padding-top: 0; }
     state.test.chars = [...text];
     state.test.typed = [];
     state.test.idx = 0;
+
+    const isCode = state.test.mode === 'code';
+    if (isCode) {
+      // Render character-by-character preserving newlines and indentation
+      let html = '';
+      let i = 0;
+      for (const c of text) {
+        if (c === '\n') {
+          html += `<span class="char nl" data-i="${i++}">↵</span><br>`;
+        } else if (c === ' ') {
+          html += `<span class="char sp" data-i="${i++}">&nbsp;</span>`;
+        } else if (c === '\t') {
+          html += `<span class="char tb" data-i="${i++}">&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+        } else {
+          // escape HTML
+          const esc = c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+          html += `<span class="char" data-i="${i++}">${esc}</span>`;
+        }
+      }
+      stream.innerHTML = html;
+      stream.classList.add('code-stream');
+      requestAnimationFrame(() => setCaretTo(0));
+      return;
+    }
+    stream.classList.remove('code-stream');
 
     const words = text.split(' ');
     let i = 0;
@@ -4427,6 +5219,11 @@ body.zen-mode main { padding-top: 0; }
 
     if (e.key === 'Tab') {
       e.preventDefault();
+      // In code mode: Tab types a tab character instead of restart-prep
+      if (state.test.mode === 'code' && !state.test.tabHit) {
+        handleKeyInput('\t', e);
+        return;
+      }
       state.test.tabHit = true;
       setTimeout(() => state.test.tabHit = false, 1000);
       return;
@@ -4437,6 +5234,12 @@ body.zen-mode main { padding-top: 0; }
       restartRun();
       return;
     }
+    // In code mode, Enter types a newline
+    if (e.key === 'Enter' && state.test.mode === 'code') {
+      e.preventDefault();
+      handleKeyInput('\n', e);
+      return;
+    }
 
     // Only handle single-char keys and Backspace beyond this point
     if (e.key.length !== 1 && e.key !== 'Backspace') return;
@@ -4445,15 +5248,18 @@ body.zen-mode main { padding-top: 0; }
     if (e.key === ' ') e.preventDefault();
 
     focusTyper();
+    handleKeyInput(e.key, e);
+  }
 
+  function handleKeyInput(key, e) {
     // Start on first actual keypress (not backspace when empty)
     if (!state.test.running) {
-      if (e.key === 'Backspace') return;
+      if (key === 'Backspace') return;
       startRun();
     }
     if (state.test.paused) return;
 
-    if (e.key === 'Backspace') {
+    if (key === 'Backspace') {
       if (state.test.idx === 0) return;
       state.test.idx--;
       const rec = state.test.typed.pop();
@@ -4486,19 +5292,19 @@ body.zen-mode main { padding-top: 0; }
     const el = chars[state.test.idx];
     if (!el) return;
 
-    if (e.key === expected) {
+    if (key === expected) {
       el.classList.add('correct');
       state.test.correct++;
-      state.test.typed.push({ ch: e.key, correct: true });
+      state.test.typed.push({ ch: key, correct: true });
       audio.keyOk();
-      showKeycap(e.key, false);
+      showKeycap(key, false);
     } else {
       el.classList.add('wrong');
       state.test.wrong++;
       state.test.errsInSec++;
-      state.test.typed.push({ ch: e.key, correct: false });
+      state.test.typed.push({ ch: key, correct: false });
       audio.keyBad();
-      showKeycap(e.key, true);
+      showKeycap(key, true);
       typer.classList.remove('shake');
       void typer.offsetWidth;
       typer.classList.add('shake');
@@ -4657,10 +5463,37 @@ body.zen-mode main { padding-top: 0; }
     setTimeout(() => checkAch({ wpm: wpmNet, acc, elapsed: elapsedSec, mode: state.test.mode, modeVal: state.test.modeVal }), 500);
     setTimeout(renderResultsChart, 60);
 
+    // Render the code output panel if this was a code run
+    renderCodeOutput();
+
     updateDashboard();
     $('#heroPb').textContent = state.stats.pbWpm || '—';
     $('#heroSession').textContent = state.sessionTests;
     $('#results').classList.add('show');
+  }
+
+  function renderCodeOutput() {
+    // Remove any existing output panel
+    const old = document.querySelector('.code-output');
+    if (old) old.remove();
+    if (state.test.mode !== 'code' || !state.test.currentSnippet) return;
+    const s = state.test.currentSnippet;
+    const langLabel = { python: 'Python', java: 'Java', cpp: 'C++' }[state.test.modeVal] || 'Code';
+    const panel = document.createElement('div');
+    panel.className = 'code-output';
+    panel.innerHTML = `
+      <div class="code-output-head">
+        <span>Program Output · ${s.title}</span>
+        <span class="lang-tag">${langLabel}</span>
+      </div>
+      <pre class="code-output-body"></pre>
+    `;
+    panel.querySelector('.code-output-body').textContent = s.output;
+    // Insert after chart-box
+    const chartBox = document.querySelector('.chart-box');
+    if (chartBox && chartBox.parentNode) {
+      chartBox.parentNode.insertBefore(panel, chartBox.nextSibling);
+    }
   }
 
   function computeConsistency() {
@@ -5132,18 +5965,23 @@ body.zen-mode main { padding-top: 0; }
       $('#timeGroup').style.display = state.test.mode === 'time' ? '' : 'none';
       $('#wordsGroup').style.display = state.test.mode === 'words' ? '' : 'none';
       $('#quoteGroup').style.display = state.test.mode === 'quote' ? '' : 'none';
+      $('#codeGroup').style.display = state.test.mode === 'code' ? '' : 'none';
       const ag = document.querySelector(`#${state.test.mode}Group .pill.active`);
-      if (ag) state.test.modeVal = state.test.mode === 'quote' ? ag.dataset.val : Number(ag.dataset.val);
+      if (ag) {
+        const stringMode = state.test.mode === 'quote' || state.test.mode === 'code';
+        state.test.modeVal = stringMode ? ag.dataset.val : Number(ag.dataset.val);
+      }
       audio.click();
       newText();
     });
   });
 
-  ['timeGroup', 'wordsGroup', 'quoteGroup'].forEach(gid => {
+  ['timeGroup', 'wordsGroup', 'quoteGroup', 'codeGroup'].forEach(gid => {
     $$(`#${gid} .pill`).forEach(p => p.addEventListener('click', () => {
       $$(`#${gid} .pill`).forEach(x => x.classList.remove('active'));
       p.classList.add('active');
-      state.test.modeVal = state.test.mode === 'quote' ? p.dataset.val : Number(p.dataset.val);
+      const stringMode = state.test.mode === 'quote' || state.test.mode === 'code';
+      state.test.modeVal = stringMode ? p.dataset.val : Number(p.dataset.val);
       audio.click();
       newText();
     }));
@@ -5422,10 +6260,11 @@ body.zen-mode main { padding-top: 0; }
         const mode = b.dataset.mode;
         const val = b.dataset.val;
         state.test.mode = mode;
-        state.test.modeVal = (mode === 'quote') ? val : Number(val);
+        const stringMode = mode === 'quote' || mode === 'code';
+        state.test.modeVal = stringMode ? val : Number(val);
         // Sync the practice page mode pills too
         $$('#modeSwitch .pill').forEach(p => p.classList.toggle('active', p.dataset.mode === mode));
-        ['timeGroup','wordsGroup','quoteGroup'].forEach(gid => {
+        ['timeGroup','wordsGroup','quoteGroup','codeGroup'].forEach(gid => {
           const g = $('#' + gid);
           if (g) g.style.display = (gid.startsWith(mode)) ? '' : 'none';
           if (g) $$('.pill', g).forEach(p => p.classList.toggle('active', String(p.dataset.val) === String(val)));
@@ -5471,6 +6310,58 @@ body.zen-mode main { padding-top: 0; }
       $$('#quoteGroup .pill').forEach(p => p.classList.toggle('active', p.dataset.val === 'short'));
       navigate('test', { focusTyper: true });
     });
+  })();
+
+  // ---- HERO: Code callout ----
+  (() => {
+    const cta = $('#ctaCode');
+    if (!cta) return;
+    let selectedLang = 'python';
+
+    // Footer code-lang links
+    $$('a[data-code-lang]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        audio.click();
+        const lang = link.dataset.codeLang;
+        state.test.mode = 'code';
+        state.test.modeVal = lang;
+        $$('#modeSwitch .pill').forEach(p => p.classList.toggle('active', p.dataset.mode === 'code'));
+        ['timeGroup', 'wordsGroup', 'quoteGroup', 'codeGroup'].forEach(gid => {
+          const g = $('#' + gid);
+          if (g) g.style.display = gid === 'codeGroup' ? '' : 'none';
+        });
+        $$('#codeGroup .pill').forEach(p => p.classList.toggle('active', p.dataset.val === lang));
+        newText();
+        navigate('test', { focusTyper: true });
+      });
+    });
+    $$('.lang-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        $$('.lang-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedLang = chip.dataset.lang;
+        audio.click();
+      });
+      chip.addEventListener('mouseenter', () => audio.hover());
+    });
+    cta.addEventListener('click', () => {
+      audio.click();
+      state.test.mode = 'code';
+      state.test.modeVal = selectedLang;
+      // Sync the practice page UI
+      $$('#modeSwitch .pill').forEach(p => p.classList.toggle('active', p.dataset.mode === 'code'));
+      ['timeGroup', 'wordsGroup', 'quoteGroup', 'codeGroup'].forEach(gid => {
+        const g = $('#' + gid);
+        if (g) g.style.display = gid === 'codeGroup' ? '' : 'none';
+      });
+      $$('#codeGroup .pill').forEach(p => p.classList.toggle('active', p.dataset.val === selectedLang));
+      // Sync hero mode bar
+      $$('#heroModeBar button').forEach(b => b.classList.toggle('active', b.dataset.mode === 'code'));
+      newText();
+      navigate('test', { focusTyper: true });
+    });
+    cta.addEventListener('mouseenter', () => audio.hover());
   })();
 
   // ---- HERO: Zen mode toggle ----
