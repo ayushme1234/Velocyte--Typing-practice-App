@@ -404,6 +404,60 @@ a { color: inherit; text-decoration: none; }
 [data-theme="breach"] .breach-label-enter { display: none; }
 [data-theme="minimal"] .breach-label-exit { display: none; }
 
+/* ==========================================================
+   BREACH TOGGLE — ATTRACT ANIMATION (minimal theme only)
+   Eye-catching pulsing halo + auto sheen to invite the click.
+   Pauses on hover so the existing hover state takes over.
+   ========================================================== */
+[data-theme="minimal"] .breach-toggle {
+  animation: breachAttract 2.6s ease-in-out infinite;
+}
+[data-theme="minimal"] .breach-toggle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(100deg,
+    transparent 0%,
+    rgba(57, 255, 20, 0) 20%,
+    rgba(57, 255, 20, 0.65) 50%,
+    rgba(57, 255, 20, 0) 80%,
+    transparent 100%);
+  transform: translateX(-160%) skewX(-20deg);
+  animation: breachSheen 3.4s ease-in-out infinite;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+[data-theme="minimal"] .breach-toggle:hover {
+  animation: none;
+}
+[data-theme="minimal"] .breach-toggle:hover::after {
+  animation: none;
+  opacity: 0;
+}
+@keyframes breachAttract {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(57, 255, 20, 0.55),
+      0 0 0 0 rgba(57, 255, 20, 0),
+      0 4px 14px -4px rgba(0, 0, 0, 0.25);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 10px rgba(57, 255, 20, 0),
+      0 0 24px 3px rgba(57, 255, 20, 0.55),
+      0 4px 14px -4px rgba(0, 0, 0, 0.25);
+    transform: scale(1.035);
+  }
+}
+@keyframes breachSheen {
+  0%, 55%, 100% { transform: translateX(-160%) skewX(-20deg); }
+  72% { transform: translateX(360%) skewX(-20deg); }
+}
+
 /* ---- ICON BUTTONS ---- */
 .ibtn {
   width: 38px; height: 38px;
@@ -1240,6 +1294,11 @@ main { position: relative; }
   position: relative;
   animation: floatIn 0.8s 0.5s backwards cubic-bezier(0.22, 1, 0.36, 1);
 }
+/* Desktop offset — pushes the demo-monitor down slightly so the right
+   column sits visually centered against the taller left column. */
+@media (min-width: 1025px) {
+  .hero-right { padding-top: 32px; }
+}
 
 .demo-monitor {
   position: relative;
@@ -1466,6 +1525,663 @@ main { position: relative; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ==========================================================
+   HERO FEATURE SPOTLIGHT CARD — right-bottom of hero
+   Dynamic, animated, attention-grabbing. Pure additive CSS.
+   Self-contained: uses only hfc-* class names + scoped keyframes.
+   ========================================================== */
+.hero-feature-card {
+  position: relative;
+  margin-top: 14px;
+  padding: 1.5px;
+  border-radius: 14px;
+  isolation: isolate;
+  animation: hfcIntro 0.9s 0.75s backwards cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Static gradient border — no rotation */
+.hero-feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  padding: 1.5px;
+  background: linear-gradient(135deg,
+    #2563EB 0%, #7C3AED 55%, #F59E0B 100%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+}
+/* Ambient soft glow under the card */
+.hero-feature-card::after {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  background: radial-gradient(ellipse at center,
+    rgba(37, 99, 235, 0.20),
+    rgba(124, 58, 237, 0.12) 40%,
+    transparent 70%);
+  filter: blur(18px);
+  z-index: -1;
+  opacity: 0.7;
+  animation: hfcGlowPulse 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+.hfc-inner {
+  position: relative;
+  background: var(--paper);
+  border-radius: 12.5px;
+  padding: 14px 16px;
+  overflow: hidden;
+  z-index: 1;
+}
+/* Animated gradient mesh inside the card */
+.hfc-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(37, 99, 235, 0.10), transparent 55%),
+    radial-gradient(circle at 90% 100%, rgba(124, 58, 237, 0.10), transparent 55%);
+  animation: hfcMesh 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Floating particle dots */
+.hfc-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.hfc-particles span {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  bottom: -8px;
+  animation: hfcFloat 6s ease-in-out infinite;
+}
+.hfc-particles span:nth-child(1) { left: 10%; animation-delay: 0s; }
+.hfc-particles span:nth-child(2) { left: 28%; animation-delay: 1.3s; background: #7C3AED; }
+.hfc-particles span:nth-child(3) { left: 52%; animation-delay: 2.5s; background: #F59E0B; }
+.hfc-particles span:nth-child(4) { left: 72%; animation-delay: 0.9s; }
+.hfc-particles span:nth-child(5) { left: 86%; animation-delay: 3.4s; background: #7C3AED; }
+.hfc-particles span:nth-child(6) { left: 42%; animation-delay: 4.7s; background: #F59E0B; }
+
+/* Head row: live dot + label + sparkline */
+.hfc-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  z-index: 1;
+}
+.hfc-live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #EF4444;
+  box-shadow: 0 0 8px #EF4444;
+  animation: hfcDotPulse 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.hfc-live-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+.hfc-spark {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+.hfc-spark span {
+  display: block;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 1px;
+  opacity: 0.75;
+  transform-origin: bottom;
+  animation: hfcBar 1.2s ease-in-out infinite;
+}
+.hfc-spark span:nth-child(1)  { animation-delay: 0.00s; height: 40%; }
+.hfc-spark span:nth-child(2)  { animation-delay: 0.08s; height: 70%; }
+.hfc-spark span:nth-child(3)  { animation-delay: 0.16s; height: 30%; }
+.hfc-spark span:nth-child(4)  { animation-delay: 0.24s; height: 90%; }
+.hfc-spark span:nth-child(5)  { animation-delay: 0.32s; height: 50%; }
+.hfc-spark span:nth-child(6)  { animation-delay: 0.40s; height: 80%; }
+.hfc-spark span:nth-child(7)  { animation-delay: 0.48s; height: 45%; }
+.hfc-spark span:nth-child(8)  { animation-delay: 0.56s; height: 65%; }
+.hfc-spark span:nth-child(9)  { animation-delay: 0.64s; height: 35%; }
+.hfc-spark span:nth-child(10) { animation-delay: 0.72s; height: 75%; }
+
+/* Rotating feature carousel */
+.hfc-carousel {
+  position: relative;
+  height: 54px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  z-index: 1;
+}
+.hfc-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: hfcSlide 12s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+.hfc-slide-1 { animation-delay: 0s; }
+.hfc-slide-2 { animation-delay: 3s; }
+.hfc-slide-3 { animation-delay: 6s; }
+.hfc-slide-4 { animation-delay: 9s; }
+.hfc-ico {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, #2563EB, #7C3AED);
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.45);
+  animation: hfcIcoFloat 2.4s ease-in-out infinite;
+}
+.hfc-ico svg { width: 20px; height: 20px; }
+.hfc-slide-2 .hfc-ico { background: linear-gradient(135deg, #F59E0B, #DC2626); box-shadow: 0 6px 16px -4px rgba(245, 158, 11, 0.45); }
+.hfc-slide-3 .hfc-ico { background: linear-gradient(135deg, #7C3AED, #EC4899); box-shadow: 0 6px 16px -4px rgba(124, 58, 237, 0.45); }
+.hfc-slide-4 .hfc-ico { background: linear-gradient(135deg, #F59E0B, #EF4444); box-shadow: 0 6px 16px -4px rgba(239, 68, 68, 0.45); }
+.hfc-slide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.hfc-slide-body strong {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hfc-slide-body span {
+  font-size: 0.72rem;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CTA button — shimmer + hover lift */
+.hfc-cta {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 4px 14px -4px rgba(37, 99, 235, 0.45);
+}
+.hfc-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: translateX(-100%);
+  animation: hfcCtaShimmer 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+.hfc-cta svg { width: 12px; height: 12px; transition: transform 0.25s; }
+.hfc-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px -4px rgba(37, 99, 235, 0.6); }
+.hfc-cta:hover svg { transform: translateX(3px); }
+
+/* ---- Breach theme overrides ---- */
+[data-theme="breach"] .hero-feature-card,
+[data-theme="breach"] .hero-feature-card::before { border-radius: 2px; }
+[data-theme="breach"] .hero-feature-card::before {
+  background: linear-gradient(135deg,
+    #39FF14 0%, #00E5FF 55%, #FF2975 100%);
+}
+[data-theme="breach"] .hero-feature-card::after {
+  background: radial-gradient(ellipse at center, rgba(57,255,20,0.28), transparent 70%);
+}
+[data-theme="breach"] .hfc-inner { border-radius: 2px; background: var(--paper); }
+[data-theme="breach"] .hfc-live-dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+[data-theme="breach"] .hfc-live-label { color: var(--accent); }
+[data-theme="breach"] .hfc-slide-body strong { color: var(--accent); text-shadow: 0 0 6px rgba(57,255,20,0.35); font-family: var(--font-mono); }
+[data-theme="breach"] .hfc-slide-body span { font-family: var(--font-mono); }
+[data-theme="breach"] .hfc-ico { background: rgba(57,255,20,0.1); color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 14px rgba(57,255,20,0.4); border-radius: 2px; }
+[data-theme="breach"] .hfc-slide-2 .hfc-ico,
+[data-theme="breach"] .hfc-slide-3 .hfc-ico,
+[data-theme="breach"] .hfc-slide-4 .hfc-ico { background: rgba(57,255,20,0.1); box-shadow: 0 0 0 1px var(--accent), 0 0 14px rgba(57,255,20,0.4); }
+[data-theme="breach"] .hfc-cta { background: var(--accent); color: #000; border-radius: 2px; box-shadow: 0 0 16px rgba(57,255,20,0.5); }
+
+/* Mobile */
+@media (max-width: 540px) {
+  .hero-feature-card { margin-top: 12px; }
+  .hfc-inner { padding: 12px 14px; }
+  .hfc-slide-body strong { font-size: 0.88rem; }
+  .hfc-ico { width: 36px; height: 36px; }
+  .hfc-ico svg { width: 18px; height: 18px; }
+  .hfc-carousel { height: 50px; }
+}
+
+/* ---- Keyframes (all scoped with hfc- prefix) ---- */
+@keyframes hfcIntro {
+  from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0);     filter: blur(0); }
+}
+@keyframes hfcBorderSpin { to { transform: rotate(360deg); } /* kept for safety, no longer used */ }
+@keyframes hfcGlowPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 0.9; transform: scale(1.05); }
+}
+@keyframes hfcMesh {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(10px, -6px); }
+}
+@keyframes hfcDotPulse {
+  0%, 100% { transform: scale(1);   box-shadow: 0 0 0 0   rgba(239, 68, 68, 0.55); }
+  50%      { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);    }
+}
+@keyframes hfcBar {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.55; }
+  50%      { transform: scaleY(1);   opacity: 1; }
+}
+@keyframes hfcSlide {
+  0%              { opacity: 0; transform: translateY(100%); }
+  3%              { opacity: 1; transform: translateY(0);     }
+  22%             { opacity: 1; transform: translateY(0);     }
+  25%, 100%       { opacity: 0; transform: translateY(-100%); }
+}
+@keyframes hfcIcoFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-3px) rotate(-3deg); }
+}
+@keyframes hfcCtaShimmer {
+  0%, 55%, 100% { transform: translateX(-100%); }
+  75%           { transform: translateX(200%);  }
+}
+@keyframes hfcFloat {
+  0%   { opacity: 0;   transform: translateY(0)      scale(0.6); }
+  18%  { opacity: 0.85;                                           }
+  90%  { opacity: 0.3;                                            }
+  100% { opacity: 0;   transform: translateY(-180px) scale(1.1); }
+}
+
+/* ==========================================================
+   BREACH-MODE PROMO CARD — hacker terminal aesthetic
+   Lives at hero right-bottom in minimal theme.
+   Disappears once the user is already in breach mode.
+   Click anywhere on the card → toggles breach.
+   ========================================================== */
+.breach-promo {
+  position: relative;
+  margin-top: 14px;
+  padding: 18px 20px 16px;
+  background: linear-gradient(180deg, #05090A 0%, #02050A 100%);
+  border: 1px solid rgba(57, 255, 20, 0.45);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  color: #8FE896;
+  font-family: "VT323", "Geist Mono", monospace;
+  box-shadow:
+    0 0 0 1px rgba(57, 255, 20, 0.15),
+    0 0 24px rgba(57, 255, 20, 0.18),
+    0 20px 40px -20px rgba(0, 0, 0, 0.55);
+  isolation: isolate;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+  animation: bpIntro 0.9s 0.95s backwards cubic-bezier(0.22, 1, 0.36, 1), bpBorderFlicker 7s infinite;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.breach-promo:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(57, 255, 20, 0.45),
+    0 0 36px rgba(57, 255, 20, 0.35),
+    0 20px 50px -15px rgba(0, 0, 0, 0.7);
+  border-color: rgba(57, 255, 20, 0.8);
+}
+.breach-promo:focus-visible {
+  outline: 2px solid #39FF14;
+  outline-offset: 3px;
+}
+.breach-promo:active { transform: translateY(-1px) scale(0.995); }
+
+/* Hide once the user is already in breach mode */
+[data-theme="breach"] .breach-promo { display: none; }
+
+/* Horizontal scanlines across the card */
+.breach-promo-scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(57, 255, 20, 0.10) 0px,
+    rgba(57, 255, 20, 0.10) 1px,
+    transparent 1px,
+    transparent 3px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  z-index: 1;
+  animation: bpScanDrift 5s linear infinite;
+}
+/* Subtle tech grid */
+.breach-promo-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(57, 255, 20, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(57, 255, 20, 0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.65;
+}
+
+.breach-promo-inner {
+  position: relative;
+  z-index: 2;
+}
+
+/* HEADER: alert badge + status */
+.breach-promo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  font-family: "Geist Mono", monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.breach-promo-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #FF4A1C;
+}
+.bp-alert-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  background: #FF4A1C;
+  color: #000;
+  font-weight: 900;
+  font-size: 0.7rem;
+  border-radius: 2px;
+  animation: bpAlertBlink 1s steps(2) infinite;
+}
+.bp-alert-text { color: #FF4A1C; text-shadow: 0 0 6px rgba(255, 74, 28, 0.5); }
+.breach-promo-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #39FF14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+}
+.bp-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #39FF14;
+  box-shadow: 0 0 8px #39FF14;
+  animation: bpOnlinePulse 1.4s ease-in-out infinite;
+}
+
+/* TITLE with glitch effect */
+.breach-promo-title-row {
+  margin-bottom: 10px;
+}
+.breach-promo-title {
+  position: relative;
+  display: inline-block;
+  font-family: "VT323", monospace;
+  font-size: 1.75rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #39FF14;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.55);
+  line-height: 1;
+  animation: bpTitleGlitch 7s infinite;
+}
+/* RGB-split glitch layers */
+.breach-promo-title::before,
+.breach-promo-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+.breach-promo-title::before {
+  color: #FF2975;
+  text-shadow: 0 0 6px rgba(255, 41, 117, 0.6);
+  animation: bpGlitchR 7s infinite;
+}
+.breach-promo-title::after {
+  color: #00E5FF;
+  text-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+  animation: bpGlitchB 7s infinite;
+}
+.breach-promo:hover .breach-promo-title {
+  animation-duration: 2.5s;
+}
+
+/* Terminal lines */
+.breach-promo-lines {
+  margin-bottom: 14px;
+  font-family: "VT323", monospace;
+  font-size: 1.02rem;
+  line-height: 1.3;
+  color: #B5FFC0;
+}
+.bp-line {
+  display: block;
+  opacity: 0;
+  transform: translateX(-4px);
+  animation: bpLineIn 0.5s forwards;
+}
+.bp-line:nth-child(1) { animation-delay: 1.1s; }
+.bp-line:nth-child(2) { animation-delay: 1.35s; }
+.bp-line:nth-child(3) { animation-delay: 1.6s; }
+.bp-line-muted { color: #6BAF72; }
+.bp-prompt {
+  color: #39FF14;
+  font-weight: 700;
+  margin-right: 6px;
+  text-shadow: 0 0 4px rgba(57, 255, 20, 0.4);
+}
+.bp-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 2px;
+  background: #39FF14;
+  box-shadow: 0 0 6px #39FF14;
+  vertical-align: -0.12em;
+  animation: bpCursorBlink 1s steps(2) infinite;
+}
+
+/* CTA row */
+.breach-promo-cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: rgba(57, 255, 20, 0.08);
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  border-radius: 2px;
+  font-family: "Geist Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: #39FF14;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.45);
+  position: relative;
+  overflow: hidden;
+  transition: background 0.22s, border-color 0.22s;
+}
+.breach-promo-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.35), transparent);
+  transform: translateX(-100%);
+  animation: bpCtaSweep 3s ease-in-out infinite;
+  pointer-events: none;
+}
+.breach-promo:hover .breach-promo-cta {
+  background: rgba(57, 255, 20, 0.18);
+  border-color: #39FF14;
+}
+.bp-cta-chev {
+  color: #39FF14;
+  font-size: 0.9rem;
+  animation: bpChev 1.4s ease-in-out infinite;
+}
+.bp-cta-text { flex: 1; }
+.bp-cta-keycap {
+  color: #6BAF72;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  padding: 2px 6px;
+  border: 1px solid rgba(57, 255, 20, 0.28);
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* Matrix rain dots in background */
+.breach-promo-rain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.breach-promo-rain span {
+  position: absolute;
+  top: -10px;
+  width: 3px;
+  height: 12px;
+  background: linear-gradient(to bottom, transparent, #39FF14);
+  opacity: 0;
+  animation: bpRain 4s linear infinite;
+}
+.breach-promo-rain span:nth-child(1) { left: 8%;  animation-delay: 0s;   }
+.breach-promo-rain span:nth-child(2) { left: 22%; animation-delay: 1.3s; }
+.breach-promo-rain span:nth-child(3) { left: 38%; animation-delay: 2.4s; }
+.breach-promo-rain span:nth-child(4) { left: 55%; animation-delay: 0.7s; }
+.breach-promo-rain span:nth-child(5) { left: 71%; animation-delay: 3.1s; }
+.breach-promo-rain span:nth-child(6) { left: 84%; animation-delay: 1.8s; }
+.breach-promo-rain span:nth-child(7) { left: 95%; animation-delay: 2.7s; }
+
+/* ---- keyframes (scoped bp*) ---- */
+@keyframes bpIntro {
+  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+@keyframes bpBorderFlicker {
+  0%, 96%, 100% { border-color: rgba(57, 255, 20, 0.45); }
+  97% { border-color: rgba(57, 255, 20, 0.9); }
+  98% { border-color: rgba(57, 255, 20, 0.2); }
+  99% { border-color: rgba(57, 255, 20, 0.7); }
+}
+@keyframes bpScanDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 0 3px; }
+}
+@keyframes bpAlertBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+@keyframes bpOnlinePulse {
+  0%, 100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(57, 255, 20, 0.6); }
+  50%      { transform: scale(1.25); box-shadow: 0 0 0 6px rgba(57, 255, 20, 0); }
+}
+@keyframes bpTitleGlitch {
+  0%, 80%, 100% { transform: translate(0, 0); }
+  82% { transform: translate(-1px, 0); }
+  84% { transform: translate(2px, -1px); }
+  86% { transform: translate(-2px, 1px); }
+  88% { transform: translate(1px, 0); }
+  90% { transform: translate(0, 0); }
+}
+@keyframes bpGlitchR {
+  0%, 80%, 100% { opacity: 0; transform: translate(0, 0); }
+  82% { opacity: 0.75; transform: translate(-2px, 0); }
+  86% { opacity: 0.6;  transform: translate(3px, 0); }
+  90% { opacity: 0;    transform: translate(0, 0); }
+}
+@keyframes bpGlitchB {
+  0%, 80%, 100% { opacity: 0; transform: translate(0, 0); }
+  82% { opacity: 0.75; transform: translate(2px, 0); }
+  86% { opacity: 0.6;  transform: translate(-3px, 0); }
+  90% { opacity: 0;    transform: translate(0, 0); }
+}
+@keyframes bpLineIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes bpCursorBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+@keyframes bpCtaSweep {
+  0%, 60%, 100% { transform: translateX(-100%); }
+  80%           { transform: translateX(200%);  }
+}
+@keyframes bpChev {
+  0%, 100% { transform: translateX(0);   opacity: 1;   }
+  50%      { transform: translateX(3px); opacity: 0.55;}
+}
+@keyframes bpRain {
+  0%   { opacity: 0;    top: -10px; }
+  10%  { opacity: 0.85;              }
+  90%  { opacity: 0.4;               }
+  100% { opacity: 0;    top: 110%;   }
+}
+
 @media (max-width: 900px) {
   .hero { padding: 20px 20px 50px; }
   .hero-title { font-size: clamp(2rem, 8vw, 3.4rem); }
@@ -1479,6 +2195,39 @@ main { position: relative; }
   .hero-mode-bar button { padding: 6px 10px; font-size: 0.58rem; letter-spacing: 0.06em; }
   .hero-title { font-size: clamp(1.8rem, 9vw, 2.8rem); }
 }
+
+/* ==========================================================
+   DEVICE POLISH — small-screen tweaks for all new elements
+   ========================================================== */
+@media (max-width: 720px) {
+  .breach-promo { padding: 14px 15px 13px; margin-top: 12px; }
+  .breach-promo-title { font-size: 1.45rem; }
+  .breach-promo-lines { font-size: 0.95rem; margin-bottom: 11px; }
+  .breach-promo-head { font-size: 0.62rem; letter-spacing: 0.14em; }
+  .bp-cta-keycap { display: none; }
+  .breach-promo-cta { padding: 8px 11px; font-size: 0.66rem; letter-spacing: 0.12em; }
+
+  .hero-feature-card { margin-top: 12px; }
+  .hfc-inner { padding: 12px 14px; }
+  .hfc-carousel { height: 50px; margin-bottom: 10px; }
+  .hfc-slide-body strong { font-size: 0.88rem; }
+  .hfc-ico { width: 36px; height: 36px; border-radius: 9px; }
+  .hfc-ico svg { width: 17px; height: 17px; }
+  .hfc-cta { padding: 8px 14px; font-size: 0.66rem; }
+
+  /* Touch target minimums for all pills / custom presets */
+  .pill { min-height: 34px; }
+  .custom-preset { min-height: 32px; padding: 7px 12px; }
+}
+@media (max-width: 420px) {
+  .breach-promo-title { font-size: 1.3rem; }
+  .breach-promo-lines { font-size: 0.9rem; }
+  .bp-cta-text { font-size: 0.6rem; }
+  .hfc-slide-body span { font-size: 0.68rem; }
+}
+
+/* Zen mode should also hide the custom panel */
+body.zen-mode .custom-panel { display: none !important; }
 
 /* ==========================================================
    ZEN MODE — hides everything except the typing area
@@ -1701,6 +2450,346 @@ body.zen-mode main { padding-top: 0; }
   animation: breachPulse 1.6s infinite;
 }
 [data-theme="breach"] .pill-new-dot { box-shadow: 0 0 6px var(--accent); }
+
+/* ==========================================================
+   CUSTOM PRACTICE — user's own text or custom time limit
+   Button lives in .test-control; panel slides open below it.
+   Self-contained: all rules scoped to .custom-* class names.
+   ========================================================== */
+.pill-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #2563EB, #7C3AED);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+.pill-custom::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.32), transparent);
+  transform: translateX(-100%);
+  animation: pillCustomShimmer 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+.pill-custom:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px -4px rgba(124, 58, 237, 0.55);
+}
+.pill-custom-ico {
+  width: 13px; height: 13px;
+  animation: pillCustomSpin 4s linear infinite;
+}
+[data-theme="breach"] .pill-custom {
+  background: var(--accent);
+  color: #000;
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.45);
+}
+[data-theme="breach"] .pill-custom:hover { color: #000; }
+@keyframes pillCustomShimmer {
+  0%, 65%, 100% { transform: translateX(-100%); }
+  85% { transform: translateX(200%); }
+}
+@keyframes pillCustomSpin {
+  to { transform: rotate(360deg); }
+}
+
+.custom-panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.985);
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.28s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), max-height 0.35s ease;
+}
+.custom-panel:not([hidden]) { max-height: 760px; }
+.custom-panel.open { opacity: 1; transform: translateY(0) scale(1); }
+.custom-panel[hidden] { display: none; }
+.custom-panel.shake-once { animation: customShake 0.36s; }
+@keyframes customShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+[data-theme="breach"] .custom-panel {
+  background: var(--paper);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px var(--accent), 0 0 30px rgba(57,255,20,0.12);
+}
+
+.custom-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.custom-panel-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+[data-theme="breach"] .custom-panel-title { color: var(--accent); text-shadow: var(--glow); }
+.custom-panel-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563EB, #7C3AED);
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.6);
+  animation: customDotPulse 1.4s ease-in-out infinite;
+}
+[data-theme="breach"] .custom-panel-dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+@keyframes customDotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.35); opacity: 0.7; }
+}
+.custom-panel-close {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  color: var(--ink-mute);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.custom-panel-close:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+  transform: rotate(90deg);
+}
+[data-theme="breach"] .custom-panel-close { border-radius: 2px; }
+[data-theme="breach"] .custom-panel-close:hover { background: rgba(57,255,20,0.1); color: var(--accent); }
+
+.custom-panel-body { padding: 16px 18px; display: grid; gap: 14px; }
+.custom-field { display: grid; gap: 8px; }
+.custom-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.custom-label-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #2563EB, #7C3AED);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+[data-theme="breach"] .custom-label-num { background: var(--accent); color: #000; border-radius: 2px; }
+.custom-textarea {
+  width: 100%;
+  min-height: 96px;
+  max-height: 260px;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--bg-1);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.custom-textarea::placeholder { color: var(--ink-mute); font-style: italic; }
+.custom-textarea:focus {
+  outline: none;
+  border-color: #7C3AED;
+  background: var(--paper);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+}
+[data-theme="breach"] .custom-textarea {
+  background: var(--bg-1);
+  border-color: var(--line);
+  border-radius: 2px;
+  color: var(--ink);
+  font-family: "VT323", monospace;
+  font-size: 1.05rem;
+}
+[data-theme="breach"] .custom-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(57,255,20,0.2);
+}
+.custom-field-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mute);
+  letter-spacing: 0.04em;
+}
+.custom-field-hint { font-style: italic; }
+[data-theme="breach"] .custom-field-meta { color: var(--ink-soft); }
+
+.custom-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink-mute);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 2px 0;
+}
+.custom-divider::before,
+.custom-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+[data-theme="breach"] .custom-divider { color: var(--accent); }
+
+.custom-time-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.custom-time-input {
+  width: 140px;
+  padding: 11px 14px;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-variation-settings: "opsz" 144;
+  color: var(--ink);
+  background: var(--bg-1);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.custom-time-input::-webkit-outer-spin-button,
+.custom-time-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.custom-time-input:focus {
+  outline: none;
+  border-color: #2563EB;
+  background: var(--paper);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+[data-theme="breach"] .custom-time-input {
+  border-color: var(--line);
+  border-radius: 2px;
+  font-family: "VT323", monospace;
+  background: var(--bg-1);
+}
+[data-theme="breach"] .custom-time-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(57,255,20,0.2);
+}
+.custom-time-unit {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+  letter-spacing: 0.08em;
+}
+.custom-time-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.custom-preset {
+  padding: 6px 11px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  background: var(--bg-2);
+  border-radius: 999px;
+  transition: all 0.18s;
+}
+.custom-preset:hover {
+  color: var(--ink);
+  background: var(--bg-1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.custom-preset.active { background: var(--ink); color: var(--bg); }
+[data-theme="breach"] .custom-preset {
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+[data-theme="breach"] .custom-preset:hover { border-color: var(--accent); color: var(--accent); }
+[data-theme="breach"] .custom-preset.active { background: var(--accent); color: #000; box-shadow: var(--glow); }
+
+.custom-panel-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 18px 16px;
+  border-top: 1px solid var(--line-soft);
+}
+.custom-action {
+  padding: 10px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  transition: all 0.22s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.custom-action-cancel { color: var(--ink-mute); background: transparent; }
+.custom-action-cancel:hover { color: var(--ink); background: var(--bg-2); }
+.custom-action-apply {
+  color: var(--bg);
+  background: var(--ink);
+  box-shadow: 0 4px 14px -4px rgba(10, 10, 10, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+.custom-action-apply::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: translateX(-100%);
+  animation: pillCustomShimmer 2.6s ease-in-out infinite;
+}
+.custom-action-apply:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px -4px rgba(37, 99, 235, 0.5);
+}
+.custom-action-apply svg { transition: transform 0.2s; position: relative; z-index: 1; }
+.custom-action-apply:hover svg { transform: translateX(3px); }
+[data-theme="breach"] .custom-action { border-radius: 2px; }
+[data-theme="breach"] .custom-action-apply {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 0 16px rgba(57,255,20,0.5);
+}
+
+@media (max-width: 720px) {
+  .custom-panel-body { padding: 14px; gap: 12px; }
+  .custom-panel-head { padding: 12px 14px 8px; }
+  .custom-panel-actions { padding: 10px 14px 14px; flex-direction: column-reverse; }
+  .custom-action { width: 100%; justify-content: center; }
+  .custom-textarea { font-size: 16px; } /* prevent iOS zoom */
+  .custom-time-input { font-size: 1.2rem; width: 120px; }
+  .custom-sep { display: none; }
+}
 
 /* live stats row */
 .live-row {
@@ -2284,7 +3373,7 @@ body.zen-mode main { padding-top: 0; }
   25% { transform: translateX(-3px); }
   75% { transform: translateX(3px); }
 }
-.typer.shake { animation: shake 0.15s; }
+.typer.shake { animation: none; }
 
 /* ==========================================================
    ACHIEVEMENTS
@@ -3343,6 +4432,125 @@ body.zen-mode main { padding-top: 0; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink-mute); }
+
+/* ==========================================================
+   PERFORMANCE LAYER — smooths transitions without altering them
+   Promotes animated elements to their own compositor layers so
+   the GPU handles them instead of the CPU. This does NOT change
+   any animation, keyframe, duration, or easing — it only tells
+   the browser how to render the existing effects efficiently.
+   ========================================================== */
+
+/* Page transitions: pre-allocate a compositor layer so the
+   blur()/transform/opacity animation doesn't trigger per-frame
+   rasterization of page content on weak devices. */
+[data-page] {
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+[data-page].active {
+  contain: paint;
+}
+
+/* Navbar: backdrop-filter recomposites on every scroll frame.
+   Hinting GPU + isolation keeps it silky. */
+.nav {
+  will-change: background;
+  transform: translateZ(0);
+}
+
+/* Self-contained cards — isolate paint region so content
+   inside doesn't trigger repaints on the page outside. */
+.hero-feature-card,
+.breach-promo,
+.demo-monitor,
+.custom-panel {
+  contain: layout paint;
+}
+
+/* Elements that animate transform/opacity — promote to GPU */
+.hfc-particles span,
+.hfc-slide,
+.hfc-ico,
+.hfc-cta::before,
+.hfc-spark span,
+.hfc-inner::before,
+.hero-feature-card::after,
+.breach-promo-scan,
+.breach-promo-rain span,
+.breach-promo-title,
+.breach-promo-title::before,
+.breach-promo-title::after,
+.bp-cta-chev,
+.bp-alert-box,
+.bp-dot,
+.bp-cursor,
+.breach-promo-cta::before,
+.breach-toggle,
+.breach-toggle::after,
+.breach-toggle::before,
+.orb,
+.demo-cursor,
+.pill-custom::before,
+.custom-action-apply::before,
+.custom-panel-dot,
+.bg-grain,
+.bg-grid,
+.bg-matrix,
+.bg-scan,
+.hero-wave span,
+body::after {
+  will-change: transform, opacity;
+}
+
+/* Elements with hover-transform transitions — keep their layer
+   warm so the first hover doesn't stutter from a cold start. */
+.btn,
+.pill,
+.hero-daily,
+.demo-monitor,
+.profile-btn,
+.ibtn,
+.hero-stat-pill,
+.act,
+.lang-chip,
+.hfc-cta,
+.custom-preset,
+.custom-action {
+  will-change: transform;
+}
+
+/* Flicker-free transforms across the board */
+.hero-feature-card,
+.breach-promo,
+.demo-monitor,
+.custom-panel,
+.btn,
+.pill,
+.hero-daily,
+.breach-toggle,
+.profile-btn,
+.ibtn {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Respect user's OS-level reduced-motion preference — all the
+   keyframes still exist but stop looping, preventing discomfort
+   for users with motion sensitivity. This is an ADDITION, not
+   a modification, of the existing animations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.12s !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -3641,6 +4849,42 @@ body.zen-mode main { padding-top: 0; }
           <span class="hero-daily-text" id="heroDailyText">Loading today's passage…</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
+
+        <!-- Breach-mode promo card — hacker aesthetic, hidden once already in breach -->
+        <div class="breach-promo" id="breachPromo" onclick="document.getElementById('breachToggle').click()" role="button" tabindex="0" aria-label="Enter breach mode" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('breachToggle').click();}">
+          <div class="breach-promo-scan" aria-hidden="true"></div>
+          <div class="breach-promo-grid" aria-hidden="true"></div>
+          <div class="breach-promo-inner">
+            <div class="breach-promo-head">
+              <span class="breach-promo-alert" aria-hidden="true">
+                <span class="bp-alert-box">!</span>
+                <span class="bp-alert-text">SYSTEM ALERT</span>
+              </span>
+              <span class="breach-promo-status" aria-hidden="true">
+                <span class="bp-dot"></span>
+                <span class="bp-status-text">ONLINE</span>
+              </span>
+            </div>
+            <div class="breach-promo-title-row" aria-hidden="true">
+              <span class="breach-promo-title" data-text="ENTER_THE_BREACH">ENTER_THE_BREACH</span>
+            </div>
+            <div class="breach-promo-lines" aria-hidden="true">
+              <div class="bp-line"><span class="bp-prompt">&gt;</span> Unlock underground typing mode<span class="bp-cursor"></span></div>
+              <div class="bp-line bp-line-muted"><span class="bp-prompt">&gt;</span> Phosphor green · Scanlines · Glitch FX</div>
+              <div class="bp-line bp-line-muted"><span class="bp-prompt">&gt;</span> Matrix rain · VT323 terminal · CRT flicker</div>
+            </div>
+            <div class="breach-promo-cta">
+              <span class="bp-cta-chev">▸</span>
+              <span class="bp-cta-text">INITIATE BREACH</span>
+              <span class="bp-cta-keycap">[SHIFT · B]</span>
+            </div>
+          </div>
+          <div class="breach-promo-rain" aria-hidden="true">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            <span></span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -3679,6 +4923,63 @@ body.zen-mode main { padding-top: 0; }
           <button class="pill active" data-val="python">Python</button>
           <button class="pill" data-val="java">Java</button>
           <button class="pill" data-val="cpp">C++</button>
+        </div>
+        <div class="pill-sep custom-sep"></div>
+        <button class="pill pill-custom" id="customBtn" type="button" title="Your own text or time limit">
+          <svg class="pill-custom-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M12 19v3M5 12H2M22 12h-3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+          Custom
+        </button>
+      </div>
+
+      <!-- Custom practice panel — slides open when Custom is clicked -->
+      <div class="custom-panel" id="customPanel" hidden>
+        <div class="custom-panel-head">
+          <span class="custom-panel-title">
+            <span class="custom-panel-dot"></span>
+            Custom Practice
+          </span>
+          <button class="custom-panel-close" id="customCancel" type="button" aria-label="Close">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="custom-panel-body">
+          <div class="custom-field">
+            <label for="customText" class="custom-label">
+              <span class="custom-label-num">01</span>
+              Paste your own text
+            </label>
+            <textarea id="customText" class="custom-textarea" placeholder="Drop in any passage — a quote, essay, code snippet, anything. When you finish typing it, we'll show you your exact completion time, WPM, and accuracy." rows="4"></textarea>
+            <div class="custom-field-meta">
+              <span><span id="customTextCount">0</span> chars · <span id="customTextWords">0</span> words</span>
+              <span class="custom-field-hint">timer auto-starts on first keystroke</span>
+            </div>
+          </div>
+          <div class="custom-divider"><span>OR</span></div>
+          <div class="custom-field">
+            <label for="customTime" class="custom-label">
+              <span class="custom-label-num">02</span>
+              Set your own time limit
+            </label>
+            <div class="custom-time-row">
+              <input type="number" id="customTime" class="custom-time-input" min="5" max="3600" placeholder="e.g. 45">
+              <span class="custom-time-unit">seconds</span>
+            </div>
+            <div class="custom-time-presets">
+              <button class="custom-preset" type="button" data-sec="10">10s</button>
+              <button class="custom-preset" type="button" data-sec="45">45s</button>
+              <button class="custom-preset" type="button" data-sec="90">90s</button>
+              <button class="custom-preset" type="button" data-sec="180">3 min</button>
+              <button class="custom-preset" type="button" data-sec="300">5 min</button>
+              <button class="custom-preset" type="button" data-sec="600">10 min</button>
+            </div>
+          </div>
+        </div>
+        <div class="custom-panel-actions">
+          <button class="custom-action custom-action-cancel" id="customCancel2" type="button">Cancel</button>
+          <button class="custom-action custom-action-apply" id="customApply" type="button">
+            <span>Start Practice</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
         </div>
       </div>
 
@@ -3950,7 +5251,7 @@ body.zen-mode main { padding-top: 0; }
     theme: localStorage.getItem(LS + 'theme') || 'minimal',
     sound: {
       on: JSON.parse(localStorage.getItem(LS + 'soundOn') ?? 'true'),
-      vol: Number(localStorage.getItem(LS + 'vol') ?? 60)
+      vol: Number(localStorage.getItem(LS + 'vol') ?? 75)
     },
     settings: JSON.parse(localStorage.getItem(LS + 'settings') || 'null') || {
       fontSize: 1.5,
@@ -4361,21 +5662,21 @@ Distance: 5.0`
       if (!C) return;
       this.ctx = new C();
       this.master = this.ctx.createGain();
-      this.master.gain.value = state.sound.vol / 100 * 0.4;
+      this.master.gain.value = state.sound.vol / 100 * 1.0;
 
       // Subtle master compressor for polish
       const comp = this.ctx.createDynamicsCompressor();
-      comp.threshold.value = -12;
+      comp.threshold.value = -6;
       comp.knee.value = 20;
-      comp.ratio.value = 3;
+      comp.ratio.value = 2;
       comp.attack.value = 0.003;
-      comp.release.value = 0.15;
+      comp.release.value = 0.12;
       this.master.connect(comp);
       comp.connect(this.ctx.destination);
     },
     vol(v) {
       state.sound.vol = v;
-      if (this.master) this.master.gain.value = v / 100 * 0.4;
+      if (this.master) this.master.gain.value = v / 100 * 1.0;
       localStorage.setItem(LS + 'vol', v);
     },
     tone({ f = 440, type = 'sine', dur = 0.04, g = 0.15, slide = null, filter = null, attack = 0.005, pan = 0 } = {}) {
@@ -4454,14 +5755,14 @@ Distance: 5.0`
     },
     hover() {
       if (state.theme === 'breach') {
-        this.tone({ f: 600, type: 'sine', dur: 0.06, g: 0.04, slide: 1000, filter: 2500 });
+        this.tone({ f: 600, type: 'sine', dur: 0.06, g: 0.08, slide: 1000, filter: 2500 });
       } else {
-        this.tone({ f: 1200, type: 'sine', dur: 0.03, g: 0.03, attack: 0.002 });
+        this.tone({ f: 1200, type: 'sine', dur: 0.03, g: 0.06, attack: 0.002 });
       }
     },
     boot() {
       // Subtle terminal tick during breach sequence
-      this.tone({ f: 1600 + Math.random() * 400, type: 'square', dur: 0.008, g: 0.04, filter: 5000, attack: 0.001 });
+      this.tone({ f: 1600 + Math.random() * 400, type: 'square', dur: 0.008, g: 0.08, filter: 5000, attack: 0.001 });
     },
     crtSnap() {
       if (!this.on) return;
@@ -4567,6 +5868,114 @@ Distance: 5.0`
         this.tone({ f: 1100, type: 'sine', dur: 0.05, g: 0.08, filter: 3000, attack: 0.003 });
         this.tone({ f: 1650, type: 'sine', dur: 0.04, g: 0.05, filter: 3500, attack: 0.003 });
       }
+    },
+
+    // ---- Enhanced theme-aware sounds (additive) ----
+
+    // Panel open: subtle rising chime (minimal) / boot-up beep (breach)
+    panelOpen() {
+      if (!this.on) return;
+      this.init();
+      if (state.theme === 'breach') {
+        this.tone({ f: 520, type: 'square', dur: 0.04, g: 0.08, slide: 780, filter: 3000, attack: 0.002 });
+        this.tone({ f: 1040, type: 'square', dur: 0.03, g: 0.05, filter: 4500, attack: 0.001 });
+        setTimeout(() => this.noise(0.03, 0.05, 3000, 1.5), 30);
+      } else {
+        this.tone({ f: 880, type: 'sine', dur: 0.08, g: 0.08, slide: 1320, filter: 3500, attack: 0.004 });
+        this.tone({ f: 1760, type: 'sine', dur: 0.05, g: 0.04, filter: 4000, attack: 0.008 });
+      }
+    },
+
+    // Panel close: descending counterpart
+    panelClose() {
+      if (!this.on) return;
+      this.init();
+      if (state.theme === 'breach') {
+        this.tone({ f: 780, type: 'square', dur: 0.05, g: 0.07, slide: 320, filter: 2500 });
+        this.tone({ f: 390, type: 'square', dur: 0.04, g: 0.04, filter: 2000 });
+      } else {
+        this.tone({ f: 1320, type: 'sine', dur: 0.07, g: 0.07, slide: 660, filter: 3000, attack: 0.003 });
+        this.tone({ f: 660, type: 'sine', dur: 0.04, g: 0.04, filter: 2200, attack: 0.005 });
+      }
+    },
+
+    // Soft air-swoosh for sliding surfaces — noise band with quick filter sweep
+    whoosh() {
+      if (!this.on) return;
+      this.init();
+      if (!this.ctx) return;
+      const t = this.ctx.currentTime;
+      const dur = state.theme === 'breach' ? 0.22 : 0.28;
+      const size = this.ctx.sampleRate * dur;
+      const buf = this.ctx.createBuffer(1, size, this.ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < size; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / size, 1.2);
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf;
+      const flt = this.ctx.createBiquadFilter();
+      flt.type = 'bandpass';
+      flt.frequency.setValueAtTime(state.theme === 'breach' ? 400 : 800, t);
+      flt.frequency.exponentialRampToValueAtTime(state.theme === 'breach' ? 2200 : 3000, t + dur);
+      flt.Q.value = 1.5;
+      const gn = this.ctx.createGain();
+      gn.gain.setValueAtTime(0, t);
+      gn.gain.linearRampToValueAtTime(state.theme === 'breach' ? 0.11 : 0.075, t + 0.02);
+      gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      src.connect(flt); flt.connect(gn); gn.connect(this.master);
+      src.start(t);
+    },
+
+    // Richer hover for cards — more presence than standard hover()
+    cardHover() {
+      if (!this.on) return;
+      this.init();
+      if (state.theme === 'breach') {
+        // Phosphor warm-up: short filtered glitch
+        this.tone({ f: 520, type: 'sawtooth', dur: 0.08, g: 0.08, slide: 820, filter: 2200, attack: 0.003 });
+        this.noise(0.04, 0.06, 2400, 2);
+      } else {
+        // Soft ascending air — two sine partials
+        this.tone({ f: 880, type: 'sine', dur: 0.09, g: 0.08, slide: 1100, attack: 0.008, filter: 3500 });
+        this.tone({ f: 1760, type: 'sine', dur: 0.07, g: 0.04, attack: 0.012, filter: 4500 });
+      }
+    },
+
+    // CTA hover — brighter, to guide the eye toward primary actions
+    ctaHover() {
+      if (!this.on) return;
+      this.init();
+      if (state.theme === 'breach') {
+        this.tone({ f: 660, type: 'square', dur: 0.05, g: 0.09, slide: 990, filter: 4000, attack: 0.001 });
+      } else {
+        this.tone({ f: 1320, type: 'sine', dur: 0.06, g: 0.085, slide: 1760, attack: 0.005, filter: 4500 });
+      }
+    },
+
+    // Satisfying confirm sound for Apply / Start actions
+    confirm() {
+      if (!this.on) return;
+      this.init();
+      if (state.theme === 'breach') {
+        // Short ascending arpeggio with square character
+        [523, 784, 1046].forEach((f, i) => setTimeout(() => this.tone({
+          f, type: 'square', dur: 0.07, g: 0.1, filter: 4000, attack: 0.002
+        }), i * 48));
+      } else {
+        // Warm two-note chime
+        this.tone({ f: 880, type: 'sine', dur: 0.13, g: 0.1, filter: 3500, attack: 0.004 });
+        setTimeout(() => this.tone({ f: 1318, type: 'sine', dur: 0.18, g: 0.09, filter: 4000, attack: 0.004 }), 60);
+      }
+    },
+
+    // Breach-promo specific hover — more intense, on-theme teaser of what's coming
+    breachTease() {
+      if (!this.on) return;
+      this.init();
+      // Always plays the breach aesthetic regardless of current theme,
+      // because the breach-promo card is always the hacker aesthetic.
+      this.tone({ f: 220, type: 'sawtooth', dur: 0.12, g: 0.08, slide: 420, filter: 1800, attack: 0.002 });
+      this.tone({ f: 880, type: 'square', dur: 0.05, g: 0.04, filter: 3500 });
+      setTimeout(() => this.noise(0.06, 0.045, 1600, 1.8), 40);
     }
   };
 
@@ -6401,6 +7810,166 @@ Distance: 5.0`
       }
     }
     el.textContent = streak;
+  })();
+
+  // ---- CUSTOM PRACTICE: user-provided text or custom time ----
+  (() => {
+    const btn = $('#customBtn');
+    const panel = $('#customPanel');
+    if (!btn || !panel) return;
+    const textEl = $('#customText');
+    const timeEl = $('#customTime');
+    const countEl = $('#customTextCount');
+    const wordsEl = $('#customTextWords');
+    const applyBtn = $('#customApply');
+    const cancel1 = $('#customCancel');
+    const cancel2 = $('#customCancel2');
+
+    const openPanel = () => {
+      panel.hidden = false;
+      // next frame → enable the opening transition
+      requestAnimationFrame(() => panel.classList.add('open'));
+      setTimeout(() => { try { textEl.focus(); } catch (e) {} }, 180);
+      try { audio.whoosh(); audio.panelOpen(); } catch (e) {}
+    };
+    const closePanel = () => {
+      panel.classList.remove('open');
+      setTimeout(() => { panel.hidden = true; }, 280);
+      try { audio.panelClose(); } catch (e) {}
+    };
+
+    btn.addEventListener('click', () => {
+      if (panel.hidden) openPanel(); else closePanel();
+    });
+    btn.addEventListener('mouseenter', () => { try { audio.ctaHover(); } catch (e) {} });
+    [cancel1, cancel2].forEach(c => c && c.addEventListener('click', () => {
+      closePanel();
+    }));
+
+    // Close the panel whenever the user clicks back to any normal mode or value pill
+    $$('#modeSwitch .pill, #timeGroup .pill, #wordsGroup .pill, #quoteGroup .pill, #codeGroup .pill').forEach(p => {
+      p.addEventListener('click', () => {
+        if (!panel.hidden) closePanel();
+      });
+    });
+    // Also close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        closePanel();
+      }
+    });
+
+    // Live char/word counters
+    const updateCounts = () => {
+      const v = textEl.value;
+      if (countEl) countEl.textContent = v.length;
+      if (wordsEl) wordsEl.textContent = v.trim() ? v.trim().split(/\s+/).length : 0;
+    };
+    textEl.addEventListener('input', updateCounts);
+    updateCounts();
+
+    // Time presets
+    $$('.custom-preset').forEach(p => {
+      p.addEventListener('click', () => {
+        timeEl.value = p.dataset.sec;
+        $$('.custom-preset').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+        try { audio.click(); } catch (e) {}
+      });
+      p.addEventListener('mouseenter', () => { try { audio.hover(); } catch (e) {} });
+    });
+    // Clear preset highlight when user types a manual number
+    timeEl.addEventListener('input', () => {
+      $$('.custom-preset').forEach(x => x.classList.remove('active'));
+    });
+
+    // Apply → set state, sync UI, go to test
+    applyBtn.addEventListener('click', () => {
+      const text = (textEl.value || '').trim();
+      const secs = parseInt(timeEl.value, 10);
+      const haveText = text.length > 0;
+      const haveTime = !isNaN(secs) && secs >= 5;
+
+      if (!haveText && !haveTime) {
+        panel.classList.remove('shake-once');
+        void panel.offsetWidth;
+        panel.classList.add('shake-once');
+        setTimeout(() => panel.classList.remove('shake-once'), 420);
+        if (textEl) textEl.focus();
+        return;
+      }
+
+      if (haveText) {
+        // Use the existing quote-mode infrastructure with the user's text.
+        // When the user finishes typing, showResults() already prints elapsed time.
+        state.test.mode = 'quote';
+        state.test.modeVal = 'short';
+        state.test.text = text;
+        state.test.lastText = text;
+        $$('#modeSwitch .pill').forEach(p =>
+          p.classList.toggle('active', p.dataset.mode === 'quote'));
+        ['timeGroup','wordsGroup','quoteGroup','codeGroup'].forEach(gid => {
+          const g = $('#' + gid);
+          if (g) g.style.display = 'none';
+        });
+        $$('#quoteGroup .pill').forEach(p =>
+          p.classList.toggle('active', p.dataset.val === 'short'));
+        restartRun();
+      } else {
+        // Custom time → use existing time mode with user's seconds
+        state.test.mode = 'time';
+        state.test.modeVal = secs;
+        $$('#modeSwitch .pill').forEach(p =>
+          p.classList.toggle('active', p.dataset.mode === 'time'));
+        const tg = $('#timeGroup');
+        if (tg) tg.style.display = '';
+        ['wordsGroup','quoteGroup','codeGroup'].forEach(gid => {
+          const g = $('#' + gid);
+          if (g) g.style.display = 'none';
+        });
+        // Clear all preset time pills (user has a custom value)
+        $$('#timeGroup .pill').forEach(p => p.classList.remove('active'));
+        newText();
+      }
+
+      closePanel();
+      try { audio.confirm(); } catch (e) {}
+      // Route to the test page and focus the typer
+      try { navigate('test', { focusTyper: true }); } catch (e) {}
+    });
+  })();
+
+  // ---- Hero card hover sounds (theme-aware) ----
+  (() => {
+    const fc = document.querySelector('.hero-feature-card');
+    const bp = document.getElementById('breachPromo');
+    let fcArmed = true, bpArmed = true;
+    if (fc) {
+      fc.addEventListener('mouseenter', () => {
+        if (!fcArmed) return;
+        fcArmed = false;
+        try { audio.cardHover(); } catch (e) {}
+        setTimeout(() => { fcArmed = true; }, 250);
+      });
+      const cta = fc.querySelector('.hfc-cta');
+      if (cta) cta.addEventListener('mouseenter', () => { try { audio.ctaHover(); } catch (e) {} });
+    }
+    if (bp) {
+      bp.addEventListener('mouseenter', () => {
+        if (!bpArmed) return;
+        bpArmed = false;
+        try { audio.breachTease(); } catch (e) {}
+        setTimeout(() => { bpArmed = true; }, 350);
+      });
+    }
+    // Also add to the animated Custom pill
+    const customPill = document.getElementById('customBtn');
+    if (customPill) {
+      // Remove duplicate hover (already registered); this stays additive because
+      // adding the same listener function to the same element de-dupes,
+      // but we register a DIFFERENT function here. Use ctaHover for richness.
+      customPill.addEventListener('mouseenter', () => { try { audio.ctaHover(); } catch (e) {} });
+    }
   })();
 
 })();
